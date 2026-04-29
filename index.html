@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>马卡龙Y形 - 81种序列记录</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #f9efe2;
+      font-family: 'Segoe UI', 'Quicksand', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+      margin: 0;
+    }
+
+    .container {
+      background: #fffbf5;
+      border-radius: 3.5rem;
+      box-shadow: 0 25px 45px rgba(0, 0, 0, 0.05), 0 10px 20px rgba(0, 0, 0, 0.03);
+      padding: 2.5rem 2rem;
+      max-width: 900px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+      backdrop-filter: blur(2px);
+      border: 1px solid rgba(255, 215, 150, 0.3);
+    }
+
+    h2 {
+      color: #b68b6e;
+      font-weight: 500;
+      letter-spacing: 2px;
+      font-size: 1.8rem;
+      margin-bottom: 0.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    h2 span {
+      background: #fde4cf;
+      padding: 0.2rem 1rem;
+      border-radius: 2rem;
+      font-size: 1rem;
+      color: #9b7b64;
+      letter-spacing: 0.5px;
+    }
+
+    .progress-info {
+      background: #fff3e4;
+      padding: 0.5rem 1.5rem;
+      border-radius: 2rem;
+      color: #b48b65;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    .card-demo {
+      background: #fff6ed;
+      border-radius: 2.5rem;
+      padding: 2rem 2.5rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: inset 0 2px 10px rgba(255, 235, 200, 0.6), 0 15px 25px rgba(210, 150, 100, 0.15);
+    }
+
+    canvas {
+      display: block;
+      width: 180px;
+      height: 180px;
+      border-radius: 28px;
+      background: #fffaf2;
+      box-shadow: 0 10px 20px rgba(180, 130, 90, 0.1);
+    }
+
+    .control-panel {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn {
+      background: #ffdbb5;
+      border: none;
+      padding: 0.8rem 2rem;
+      border-radius: 3rem;
+      font-size: 1.1rem;
+      font-weight: 550;
+      color: #6b4e3d;
+      letter-spacing: 1px;
+      cursor: pointer;
+      background: #fad4b8;
+      box-shadow: 0 6px 0 #e4b48b, 0 10px 18px rgba(205, 140, 80, 0.2);
+      transition: all 0.1s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      border: 1px solid #ffe2c9;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .btn:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #e4b48b, 0 8px 12px rgba(205, 140, 80, 0.25);
+      background: #f7c89a;
+    }
+
+    .btn.clear-btn {
+      background: #ffd2b0;
+      box-shadow: 0 6px 0 #d6a77a, 0 10px 18px rgba(180, 110, 60, 0.18);
+      color: #5a3f32;
+    }
+
+    .btn:disabled {
+      opacity: 0.7;
+      transform: translateY(2px);
+      box-shadow: 0 3px 0 #d1b095;
+      pointer-events: none;
+    }
+
+    .history-section {
+      width: 100%;
+      margin-top: 0.8rem;
+    }
+
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      color: #b48b65;
+      font-weight: 500;
+      padding: 0 0.3rem;
+    }
+
+    .history-grid {
+      background: #fff5e8;
+      border-radius: 2rem;
+      padding: 1.5rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      max-height: 500px;
+      overflow-y: auto;
+      box-shadow: inset 0 0 0 1px rgba(255, 215, 170, 0.5);
+    }
+
+    .history-row {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+      background: #ffffffd6;
+      border-radius: 1.5rem;
+      padding: 0.5rem 1rem;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.02);
+    }
+
+    .history-row.current-row {
+      background: #fff3e4;
+      box-shadow: 0 4px 15px rgba(210, 150, 80, 0.2);
+      border: 2px solid #fad4b8;
+    }
+
+    .mini-canvas-container {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .mini-canvas {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: #fff9f2;
+      box-shadow: 0 2px 6px rgba(150, 100, 60, 0.1);
+      display: block;
+    }
+
+    .mini-label {
+      font-size: 0.65rem;
+      color: #c8a383;
+      font-weight: 600;
+      text-align: center;
+      margin-top: 1px;
+    }
+
+    .row-label {
+      font-size: 0.8rem;
+      color: #c8a383;
+      font-weight: 700;
+      min-width: 3rem;
+      background: #ffefdd;
+      padding: 0.2rem 0.5rem;
+      border-radius: 1rem;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .row-label.current-label {
+      background: #fad4b8;
+      color: #6b4e3d;
+    }
+
+    .status-text {
+      font-size: 0.9rem;
+      color: #b48b65;
+      margin-left: 0.5rem;
+      font-weight: 500;
+    }
+
+    .save-status {
+      font-size: 0.8rem;
+      color: #6b8e5a;
+      margin-left: 0.5rem;
+    }
+
+    @media (max-width: 500px) {
+      .container {
+        padding: 1.8rem 1rem;
+      }
+      .mini-canvas {
+        width: 36px;
+        height: 36px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>
+      🍬 马卡龙Y形
+      <span>81种序列</span>
+    </h2>
+    
+    <div class="progress-info" id="progressInfo">
+      序列 0 / 81
+    </div>
+
+    <div class="card-demo">
+      <canvas id="mainCanvas" width="200" height="200"></canvas>
+    </div>
+
+    <div class="control-panel">
+      <button class="btn" id="rotateBtn">
+        <span>⟳</span> 下一个序列
+      </button>
+      <button class="btn clear-btn" id="clearHistoryBtn">
+        <span>🗑️</span> 清空记录
+      </button>
+      <span class="status-text" id="statusText"></span>
+      <span class="save-status" id="saveStatus"></span>
+    </div>
+
+    <div class="history-section">
+      <div class="history-header">
+        <span>📋 旋转序列记录</span>
+        <span style="font-size:0.8rem; color:#c7a68b;">(每组5个：原始+4次旋转)</span>
+      </div>
+      <div class="history-grid" id="historyContainer">
+        <div class="empty-message">✨ 点击按钮开始展示81种序列 ✨</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden iframe for form submission -->
+  <iframe id="hiddenFrame" name="hiddenFrame" style="display:none;"></iframe>
+
+  <script>
+    (function () {
+      const COLOR_YELLOW = "#fceea7";
+      const COLOR_RED = "#f9b8b2";
+      const COLOR_ORANGE = "#fdd0a2";
+      const COLOR_BG = "#fff7ed";
+
+      const SIZE = 140;
+      const CENTER_X = 100;
+      const CENTER_Y = 100;
+      const HALF = SIZE / 2;
+
+      const mainCanvas = document.getElementById('mainCanvas');
+      const ctx = mainCanvas.getContext('2d');
+      const statusText = document.getElementById('statusText');
+      const saveStatus = document.getElementById('saveStatus');
+      const progressInfo = document.getElementById('progressInfo');
+      const historyContainer = document.getElementById('historyContainer');
+
+      let historyRows = [];
+      const MAX_ROWS = 100;
+      let currentDisplayAngle = 0;
+      let currentBuildingRow = null;
+      let currentBuildingAngles = [];
+      let totalGroupsGenerated = 0;
+
+      // 角度转方向
+      function angleToDirection(angle) {
+        const normalized = ((angle % 360) + 360) % 360;
+        switch(normalized) {
+          case 0: return '上';
+          case 90: return '右';
+          case 180: return '下';
+          case 270: return '左';
+          default: return '上';
+        }
+      }
+
+      // 生成所有81种序列
+      function generateAllSequences() {
+        const angles = [90, 180, 270];
+        const sequences = [];
+        
+        for (let a of angles) {
+          for (let b of angles) {
+            for (let c of angles) {
+              for (let d of angles) {
+                sequences.push([a, b, c, d]);
+              }
+            }
+          }
+        }
+        
+        // 按格雷码式排序
+        return sortByGrayCode(sequences);
+      }
+
+      function sortByGrayCode(sequences) {
+        const grouped = {};
+        sequences.forEach(seq => {
+          const key = seq.slice(0, 3).join(',');
+          if (!grouped[key]) grouped[key] = [];
+          grouped[key].push(seq);
+        });
+        
+        const result = [];
+        const keys = Object.keys(grouped);
+        
+        for (let i = 0; i < keys.length; i++) {
+          const group = grouped[keys[i]];
+          group.sort((a, b) => a[3] - b[3]);
+          result.push(...group);
+        }
+        
+        return result;
+      }
+
+      const allSequences = generateAllSequences();
+      let currentSequenceIndex = 0;
+
+      // 绘制函数
+      function drawYShape(context, angleDeg, canvasSize = 200) {
+        const w = canvasSize, h = canvasSize;
+        context.clearRect(0, 0, w, h);
+        context.fillStyle = COLOR_BG;
+        context.fillRect(0, 0, w, h);
+        context.save();
+        context.translate(CENTER_X, CENTER_Y);
+        const rad = (angleDeg * Math.PI) / 180;
+        context.rotate(rad);
+        
+        context.strokeStyle = "#e7c9a8";
+        context.lineWidth = 2.2;
+        context.strokeRect(-HALF, -HALF, SIZE, SIZE);
+        
+        context.lineWidth = 4.5;
+        context.lineCap = 'round';
+        context.lineJoin = 'round';
+        
+        const topLeft = { x: -HALF, y: -HALF };
+        const topRight = { x: HALF, y: -HALF };
+        const bottomMid = { x: 0, y: HALF };
+        
+        context.strokeStyle = COLOR_RED;
+        context.beginPath();
+        context.moveTo(0, 0);
+        context.lineTo(topLeft.x, topLeft.y);
+        context.stroke();
+        
+        context.strokeStyle = COLOR_ORANGE;
+        context.beginPath();
+        context.moveTo(0, 0);
+        context.lineTo(topRight.x, topRight.y);
+        context.stroke();
+        
+        context.strokeStyle = COLOR_YELLOW;
+        context.beginPath();
+        context.moveTo(0, 0);
+        context.lineTo(bottomMid.x, bottomMid.y);
+        context.stroke();
+        
+        context.fillStyle = "#dbb88c";
+        context.beginPath();
+        context.arc(0, 0, 4.2, 0, 2 * Math.PI);
+        context.fill();
+        
+        const drawDot = (x, y, color) => {
+          context.fillStyle = color;
+          context.beginPath();
+          context.arc(x, y, 3.8, 0, 2 * Math.PI);
+          context.fill();
+        };
+        drawDot(topLeft.x, topLeft.y, COLOR_RED);
+        drawDot(topRight.x, topRight.y, COLOR_ORANGE);
+        drawDot(bottomMid.x, bottomMid.y, COLOR_YELLOW);
+        
+        context.restore();
+      }
+
+      function drawMiniYShape(context, angleDeg, canvasSize = 48) {
+        const miniCenter = canvasSize / 2;
+        const miniHalf = canvasSize * 0.3;
+        
+        context.clearRect(0, 0, canvasSize, canvasSize);
+        context.fillStyle = "#fffaf3";
+        context.fillRect(0, 0, canvasSize, canvasSize);
+        
+        context.save();
+        context.translate(miniCenter, miniCenter);
+        const rad = (angleDeg * Math.PI) / 180;
+        context.rotate(rad);
+        
+        context.strokeStyle = "#e7c9a8";
+        context.lineWidth = 1.4;
+        context.strokeRect(-miniHalf, -miniHalf, miniHalf * 2, miniHalf * 2);
+        
+        context.lineWidth = 2.5;
+        context.lineCap = 'round';
+        
+        const topLeft = { x: -miniHalf, y: -miniHalf };
+        const topRight = { x: miniHalf, y: -miniHalf };
+        const bottomMid = { x: 0, y: miniHalf };
+        
+        context.strokeStyle = COLOR_RED;
+        context.beginPath();
+        context.moveTo(0, 0);
+        context.lineTo(topLeft.x, topLeft.y);
+        context.stroke();
+        
+        context.strokeStyle = COLOR_ORANGE;
+        context.beginPath();
+        context.moveTo(0, 0);
+        context.lineTo(topRight.x, topRight.y);
+        context.stroke();
+        
+        context.strokeStyle = COLOR_YELLOW;
+        context.beginPath();
+        context.moveTo(0, 0);
+        context.lineTo(bottomMid.x, bottomMid.y);
+        context.stroke();
+        
+        context.fillStyle = "#dbb88c";
+        context.beginPath();
+        context.arc(0, 0, 2, 0, 2 * Math.PI);
+        context.fill();
+        context.fillStyle = COLOR_RED;
+        context.beginPath(); context.arc(topLeft.x, topLeft.y, 1.8, 0, 2 * Math.PI); context.fill();
+        context.fillStyle = COLOR_ORANGE;
+        context.beginPath(); context.arc(topRight.x, topRight.y, 1.8, 0, 2 * Math.PI); context.fill();
+        context.fillStyle = COLOR_YELLOW;
+        context.beginPath(); context.arc(bottomMid.x, bottomMid.y, 1.8, 0, 2 * Math.PI); context.fill();
+        
+        context.restore();
+      }
+
+      drawYShape(ctx, currentDisplayAngle);
+
+      function getEffectiveRotation(targetAngle) {
+        if (targetAngle === 270) {
+          return { effectiveAngle: 90, duration: 500, direction: -1 };
+        } else if (targetAngle === 180) {
+          return { effectiveAngle: 180, duration: 1000, direction: 1 };
+        } else {
+          return { effectiveAngle: 90, duration: 500, direction: 1 };
+        }
+      }
+
+      function createMiniCanvas(angle) {
+        const miniCanvas = document.createElement('canvas');
+        miniCanvas.className = 'mini-canvas';
+        miniCanvas.width = 48;
+        miniCanvas.height = 48;
+        const miniCtx = miniCanvas.getContext('2d');
+        drawMiniYShape(miniCtx, angle, 48);
+        return miniCanvas;
+      }
+
+      function addGraphToCurrentRow(angle) {
+        if (!currentBuildingRow) {
+          totalGroupsGenerated++;
+          
+          currentBuildingRow = document.createElement('div');
+          currentBuildingRow.className = 'history-row current-row';
+          currentBuildingRow.dataset.groupNumber = totalGroupsGenerated;
+          
+          const labelSpan = document.createElement('span');
+          labelSpan.className = 'row-label current-label';
+          labelSpan.textContent = '当前';
+          currentBuildingRow.appendChild(labelSpan);
+          
+          const miniContainer = document.createElement('div');
+          miniContainer.className = 'mini-canvas-container';
+          currentBuildingRow.appendChild(miniContainer);
+          
+          if (historyContainer.firstChild) {
+            historyContainer.insertBefore(currentBuildingRow, historyContainer.firstChild);
+          } else {
+            historyContainer.appendChild(currentBuildingRow);
+          }
+          
+          const emptyMsg = historyContainer.querySelector('.empty-message');
+          if (emptyMsg) emptyMsg.remove();
+        }
+        
+        const miniContainer = currentBuildingRow.querySelector('.mini-canvas-container');
+        const wrapper = document.createElement('div');
+        wrapper.style.display = 'flex';
+        wrapper.style.flexDirection = 'column';
+        wrapper.style.alignItems = 'center';
+        
+        const miniCanvas = createMiniCanvas(angle);
+        wrapper.appendChild(miniCanvas);
+        
+        const label = document.createElement('span');
+        label.className = 'mini-label';
+        const currentCount = miniContainer.children.length;
+        const labels = ['原', '1', '2', '3', '4'];
+        label.textContent = labels[currentCount] || currentCount;
+        wrapper.appendChild(label);
+        
+        miniContainer.appendChild(wrapper);
+        currentBuildingAngles.push(angle);
+      }
+
+      function finalizeCurrentRow() {
+        if (currentBuildingRow) {
+          currentBuildingRow.classList.remove('current-row');
+          const labelSpan = currentBuildingRow.querySelector('.row-label');
+          if (labelSpan) {
+            labelSpan.classList.remove('current-label');
+          }
+          
+          if (currentBuildingAngles.length === 5) {
+            historyRows.unshift({
+              angles: [...currentBuildingAngles],
+              groupNumber: parseInt(currentBuildingRow.dataset.groupNumber)
+            });
+            if (historyRows.length > MAX_ROWS) {
+              historyRows.pop();
+              const rows = historyContainer.querySelectorAll('.history-row');
+              if (rows.length > MAX_ROWS) {
+                rows[rows.length - 1].remove();
+              }
+            }
+          }
+          
+          // 保存到Google Sheets
+          saveToGoogleSheets();
+          
+          currentBuildingRow = null;
+          currentBuildingAngles = [];
+          updateRowLabels();
+        }
+      }
+
+      function saveToGoogleSheets() {
+        if (currentBuildingAngles.length !== 5) return;
+        
+        const rotations = []; // 转动角度（保持原始值）
+        const directions = []; // 黄色线方向
+        
+        let currentAngle = currentBuildingAngles[0]; // 原始角度
+        
+        for (let i = 0; i < 4; i++) {
+          const nextAngle = currentBuildingAngles[i + 1];
+          // 计算转动角度（保持原始逻辑）
+          let delta = (nextAngle - currentAngle + 360) % 360;
+          if (delta === 0) delta = 360; // 转一圈
+          rotations.push(delta);
+          
+          // 记录黄色线方向
+          directions.push(angleToDirection(nextAngle));
+          
+          currentAngle = nextAngle;
+        }
+        
+        const data = {
+          orderNumber: totalGroupsGenerated,
+          rotations: rotations, // [90, 180, 270, 90] 格式
+          directions: [angleToDirection(currentBuildingAngles[0]), ...directions] // 5个方向
+        };
+        
+        // 使用form + hidden iframe方式提交
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = 'https://script.google.com/macros/s/AKfycbypl77u9h7jmzXqeyyG4XXKNifaTEhZO5Clh6Q0IV7du91w4hscrK-za9QI_zcijlI/exec'; // 替换为实际的script ID
+        form.target = 'hiddenFrame';
+        
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'data';
+        input.value = JSON.stringify(data);
+        
+        form.appendChild(input);
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
+        
+        saveStatus.textContent = `已保存 #${totalGroupsGenerated}`;
+        setTimeout(() => {
+          saveStatus.textContent = '';
+        }, 2000);
+      }
+
+      function updateRowLabels() {
+        const rows = historyContainer.querySelectorAll('.history-row');
+        rows.forEach((row) => {
+          const labelSpan = row.querySelector('.row-label');
+          if (labelSpan) {
+            const groupNumber = parseInt(row.dataset.groupNumber);
+            if (row.classList.contains('current-row') || (currentBuildingRow && row === currentBuildingRow)) {
+              labelSpan.textContent = '当前';
+              labelSpan.className = 'row-label current-label';
+            } else {
+              labelSpan.textContent = `#${groupNumber}`;
+              labelSpan.className = 'row-label';
+            }
+          }
+        });
+      }
+
+      async function performFourRotations(sequence) {
+        const pauseDuration = 500;
+        const rotations = sequence;
+        const startAngle = currentDisplayAngle;
+
+        addGraphToCurrentRow(startAngle);
+        
+        let accumulatedAngle = startAngle;
+
+        for (let i = 0; i < 4; i++) {
+          const targetRotation = rotations[i];
+          const startRotationAngle = accumulatedAngle;
+          const { effectiveAngle, duration, direction } = getEffectiveRotation(targetRotation);
+          const endRotationAngle = (startRotationAngle + effectiveAngle * direction + 360) % 360;
+          const framesPerRotation = Math.max(30, Math.floor(duration / 16));
+
+          const directionText = direction === -1 ? '逆时针' : '顺时针';
+          statusText.textContent = `第${i + 1}次旋转 ${targetRotation}° (${directionText}${effectiveAngle}°, ${duration/1000}秒)`;
+
+          await animateSingleRotation(startRotationAngle, endRotationAngle, duration, framesPerRotation);
+
+          accumulatedAngle = endRotationAngle;
+          currentDisplayAngle = accumulatedAngle;
+          addGraphToCurrentRow(accumulatedAngle);
+
+          if (i < 3) {
+            statusText.textContent = `第${i + 1}次完成，停顿0.5秒...`;
+            await pause(pauseDuration);
+          }
+        }
+
+        finalizeCurrentRow();
+        
+        statusText.textContent = `✅ 序列${currentSequenceIndex + 1}/81 完成！`;
+        progressInfo.textContent = `序列 ${currentSequenceIndex + 1} / 81`;
+        
+        setTimeout(() => {
+          statusText.textContent = '';
+        }, 2000);
+      }
+
+      function animateSingleRotation(fromAngle, toAngle, duration, frames) {
+        return new Promise((resolve) => {
+          const intervalTime = duration / frames;
+          let currentFrame = 0;
+          let deltaAngle = toAngle - fromAngle;
+          if (deltaAngle > 180) deltaAngle -= 360;
+          if (deltaAngle < -180) deltaAngle += 360;
+
+          const timer = setInterval(() => {
+            if (currentFrame >= frames) {
+              clearInterval(timer);
+              drawYShape(ctx, toAngle);
+              resolve();
+              return;
+            }
+            const progress = currentFrame / frames;
+            const currentAngle = (fromAngle + deltaAngle * progress + 360) % 360;
+            drawYShape(ctx, currentAngle);
+            currentFrame++;
+          }, intervalTime);
+        });
+      }
+
+      function pause(duration) {
+        return new Promise((resolve) => {
+          setTimeout(resolve, duration);
+        });
+      }
+
+      const rotateBtn = document.getElementById('rotateBtn');
+      const clearBtn = document.getElementById('clearHistoryBtn');
+      let isAnimating = false;
+
+      rotateBtn.addEventListener('click', async () => {
+        if (isAnimating || currentSequenceIndex >= allSequences.length) {
+          if (currentSequenceIndex >= allSequences.length) {
+            statusText.textContent = '🎉 所有81种序列已完成！';
+            setTimeout(() => { statusText.textContent = ''; }, 3000);
+          }
+          return;
+        }
+        
+        isAnimating = true;
+        rotateBtn.disabled = true;
+
+        try {
+          await performFourRotations(allSequences[currentSequenceIndex]);
+          currentSequenceIndex++;
+          
+          if (currentSequenceIndex >= allSequences.length) {
+            rotateBtn.textContent = '✅ 已完成全部81种';
+            statusText.textContent = '🎉 所有81种序列展示完毕！';
+          }
+        } catch (e) {
+          console.error('动画出错', e);
+        } finally {
+          isAnimating = false;
+          rotateBtn.disabled = false;
+        }
+      });
+
+      clearBtn.addEventListener('click', () => {
+        if (!isAnimating) {
+          historyRows = [];
+          currentBuildingRow = null;
+          currentBuildingAngles = [];
+          totalGroupsGenerated = 0;
+          currentSequenceIndex = 0;
+          historyContainer.innerHTML = '<div class="empty-message">✨ 点击按钮开始展示81种序列 ✨</div>';
+          progressInfo.textContent = '序列 0 / 81';
+          rotateBtn.textContent = '⟳ 下一个序列';
+          statusText.textContent = '';
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
